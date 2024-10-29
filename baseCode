@@ -1,9 +1,10 @@
-#define motor1  6
-#define DIRA1  4
-#define DIRB1  5
-#define motor2 9
-#define DIRA2 11
-#define DIRB2 10
+#define motor1  6 //LEFT MOTOR
+#define DIRA1  4  //FORWARD LEFT
+#define DIRB1  5  //BACKWARD LEFT
+#define motor2 9  //RIGHT MOTOR
+#define DIRA2 11  //FORWARD RIGHT 
+#define DIRB2 10  //BACKWARD RIGHT
+//US Sensor pins
 #include "SR04.h"
 #define TRIG_PIN 2
 #define ECHO_PIN 3
@@ -25,6 +26,7 @@ void leftspeed(int x){
   }
 
 }
+
 void rightspeed(int x){
   if (x<0){
   digitalWrite(DIRA2,HIGH);
@@ -48,7 +50,6 @@ void setup() {
   pinMode(DIRB2,OUTPUT);
   Serial.println("Group Project");
 }
-
 
 
 void loop() {
