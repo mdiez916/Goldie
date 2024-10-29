@@ -1,0 +1,77 @@
+#define motor1  6
+#define DIRA1  4
+#define DIRB1  5
+#define motor2 9
+#define DIRA2 11
+#define DIRB2 10
+#include "SR04.h"
+#define TRIG_PIN 2
+#define ECHO_PIN 3
+SR04 sr04 = SR04(ECHO_PIN,TRIG_PIN);
+long dist;
+int speed1 = 0;
+int speed2 = 0;
+
+void leftspeed(int x){
+  if (x<0){
+  digitalWrite(DIRA1,HIGH);
+  digitalWrite(DIRB1,LOW);
+  speed1 = abs(x);
+  }
+  if (x>0){
+  digitalWrite(DIRB1,HIGH);
+  digitalWrite(DIRA1,LOW);
+  speed1 = abs(x);
+  }
+
+}
+void rightspeed(int x){
+  if (x<0){
+  digitalWrite(DIRA2,HIGH);
+  digitalWrite(DIRB2,LOW);
+  speed2 = abs(x);
+  }
+  if (x>0){
+  digitalWrite(DIRB2,HIGH);
+  digitalWrite(DIRA2,LOW);
+  speed2 = abs(x);
+  }
+}
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(motor1,OUTPUT);
+  pinMode(DIRA1,OUTPUT);
+  pinMode(DIRB1,OUTPUT);
+  pinMode(motor2,OUTPUT);
+  pinMode(DIRA2,OUTPUT);
+  pinMode(DIRB2,OUTPUT);
+  Serial.println("Group Project");
+}
+
+
+
+void loop() {
+
+   dist=sr04.Distance();
+   Serial.println(dist);
+   if (dist < 20){
+    leftspeed(200);
+    rightspeed(-200);
+   }
+   if (dist > 20){
+    leftspeed(-175);
+    rightspeed(-175);
+   }
+   Serial.print(".   ");
+   //Serial.print();
+   /*
+   if (dist >= 20 && dist <= 100){
+
+    //leftspeed(map(dist,20,200,0,100));
+    rightspeed()
+   }
+*/
+  analogWrite(motor1,speed1);
+  analogWrite(motor2,speed2);
+}
