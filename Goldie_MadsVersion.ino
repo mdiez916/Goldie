@@ -1,9 +1,9 @@
-#define LEFT_Motor  6   //VCC pin on Motor 1
-#define LEFT_Forward  4    //Direction pin on Motor 1
-#define LEFT_Backward  5    //Direction pin on Motor 1
-#define RIGHT_Motor 9    //VCC pin on Motor 2
+#define LEFT_Motor 6        //VCC pin on Motor 1
+#define LEFT_Forward 4      //Direction pin on Motor 1
+#define LEFT_Backward 5     //Direction pin on Motor 1
+#define RIGHT_Motor 9       //VCC pin on Motor 2
 #define RIGHT_Forward 11    //Direction pin on Motor 2
-#define RIGHT_Backward 10    //Direction pin on Motor 2
+#define RIGHT_Backward 10   //Direction pin on Motor 2
 
 #include "SR04.h"   //US Sensor Library
 #define TRIG_PIN 2  //US Sensor trigger pin
@@ -91,7 +91,7 @@ void turnRight(){
   digitalWrite(RIGHT_Backward, HIGH);
 
   digitalWrite(LEFT_Backward,  LOW);
-  digitalWrite(RIGHT_Foward, LOW); 
+  digitalWrite(RIGHT_Forward, LOW); 
 
   delay(200);
 
@@ -105,7 +105,7 @@ void turnRight(){
 void turnLeft(){
 
   digitalWrite(LEFT_Backward,  HIGH);
-  digitalWrite(RIGHT_Foward, HIGH);
+  digitalWrite(RIGHT_Forward, HIGH);
 
   digitalWrite(LEFT_Forward,  LOW);
   digitalWrite(RIGHT_Backward, LOW); 
@@ -123,7 +123,7 @@ void turnLeft(){
 void moveForward(){
   if(!goesForward){
 
-    goesForward=true;
+    //goesForward=true;
     
     digitalWrite(LEFT_Forward,  HIGH);
     digitalWrite(RIGHT_Forward, HIGH);
@@ -141,7 +141,7 @@ void moveStop(){
 }
 
 void moveBackward(){
-  goesForward = false;
+  //goesForward = false;
 
   digitalWrite(LEFT_Forward,  LOW);
   digitalWrite(RIGHT_Forward, LOW);
