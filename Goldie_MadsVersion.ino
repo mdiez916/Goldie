@@ -18,9 +18,9 @@ long dist;                              //This variable will be used later in th
 int LEFT_speed = 0; //starts the Motor 1 speed at 0
 int RIGHT_speed = 0; //starts the Motor 2 speed at 0
 
-#define buttonpin 7
+#define buttonpin 8
 
-bool codestate = obstical_avoid;
+bool codestate = true; //true: default, false: custom pathway
 
 void setup() {
   Serial.begin(9600);
@@ -37,15 +37,15 @@ void setup() {
 }
 
 void loop() {
-if (digitalRead(button)==1 && codestate == obstical_avoid){
-  codestate = pathway;
+if (digitalRead(buttonpin)==1 && codestate == true){
+  codestate = false;
 }
-if (digitalRead(button)==1 && codestate == pathway){
-  codestate = obstical_avoid:
+if (digitalRead(buttonpin)==1 && codestate == false){
+  codestate = true;
 }
 
   
-if (codestate == obstical_avoid){
+if (codestate == true){
    color = digitalRead(colorpin);
    dist = sr04.Distance();          //dist will equal the distance an object is from the US Sensor in cm
    Serial.println(dist);          //prints the distance in cm
@@ -69,9 +69,9 @@ if (codestate == obstical_avoid){
   }
 }
 
-if (codestate == pathway){
-  moveforward(100);
-  movebackward(100);
+if (codestate == false){
+  moveForward(100);
+  moveBackward(100);
 }
   
   analogWrite(LEFT_Motor,LEFT_speed);     //always sets the left motor speed to whatever is calculated above
@@ -130,7 +130,7 @@ void moveStop(int ms){
   digitalWrite(LEFT_Forward, LOW);
   digitalWrite(RIGHT_Backward, LOW);
   digitalWrite(LEFT_Backward, LOW);
-  delay(ms
+  delay(ms);
 }
 
 void moveBackward(int cm){
