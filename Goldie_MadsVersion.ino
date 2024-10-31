@@ -15,34 +15,12 @@ int color = 0;
 SR04 sr04 = SR04(ECHO_PIN,TRIG_PIN);    //This is part of the US Sesor Library
 long dist;                              //This variable will be used later in the void loop
 
-int speed1 = 0; //starts the Motor 1 speed at 0
-int speed2 = 0; //starts the Motor 2 speed at 0
+int LEFT_speed = 0; //starts the Motor 1 speed at 0
+int RIGHT_speed = 0; //starts the Motor 2 speed at 0
 
-void leftspeed(int x){        //value of leftspeed with result in the speed of the left motor with the sign changing the direction of it
-  if (x>0){                   //If a positive value is imputed, the left motor will spin in the forward direction
-  digitalWrite(LEFT_Forward,HIGH);
-  digitalWrite(LEFT_Backward,LOW);
-  speed1 = abs(x);
-  }
-  if (x<0){                   //If a negative value is imputed, the left motor will spin in the revirse direction
-  digitalWrite(LEFT_Backward,HIGH);
-  digitalWrite(LEFT_Forward,LOW);
-  speed1 = abs(x);
-  }
+#define buttonpin 7
 
-}
-void rightspeed(int x){       //value of leftspeed with result in the speed of the left motor with the sign changing the direction of it
-  if (x>0){                   //If a positive value is imputed, the right motor will spin in the forward direction
-  digitalWrite(RIGHT_Forward,HIGH);
-  digitalWrite(RIGHT_Backward,LOW);
-  speed2 = abs(x);
-  }
-  if (x<0){                   //If a positive value is imputed, the right motor will spin in the forward direction
-  digitalWrite(RIGHT_Backward,HIGH);
-  digitalWrite(RIGHT_Forward,LOW);
-  speed2 = abs(x);
-  }
-}
+bool codestate = obstical_avoid;
 
 void setup() {
   Serial.begin(9600);
@@ -54,9 +32,20 @@ void setup() {
   pinMode(RIGHT_Backward,OUTPUT);
 
   pinMode(colorpin,INPUT);  //defines the ir sensor pin
+
+  pinMode(buttonpin,INPUT);  //defines the button pin
 }
 
 void loop() {
+if (digitalRead(button)==1 && codestate == obstical_avoid){
+  codestate = pathway;
+}
+if (digitalRead(button)==1 && codestate == pathway){
+  codestate = obstical_avoid:
+}
+
+  
+if (codestate == obstical_avoid){
    color = digitalRead(colorpin);
    dist = sr04.Distance();          //dist will equal the distance an object is from the US Sensor in cm
    Serial.println(dist);          //prints the distance in cm
@@ -78,74 +67,75 @@ void loop() {
       rightspeed(-100);             //and right motor is in reverse at half speed
     }
   }
-  analogWrite(LEFT_Motor,speed1);     //always sets the left motor speed to whatever is calculated above
-  analogWrite(RIGHT_Motor,speed2);     //always sets the right motor speed to whatever is calculated above
 }
 
+if (codestate == pathway){
+  moveforward(100);
+  movebackward(100);
+}
+  
+  analogWrite(LEFT_Motor,LEFT_speed);     //always sets the left motor speed to whatever is calculated above
+  analogWrite(RIGHT_Motor,RIGHT_speed);     //always sets the right motor speed to whatever is calculated above
+}
+
+void leftspeed(int x){        //value of leftspeed with result in the speed of the left motor with the sign changing the direction of it
+  if (x>0){                   //If a positive value is imputed, the left motor will spin in the forward direction
+  digitalWrite(LEFT_Forward,HIGH);
+  digitalWrite(LEFT_Backward,LOW);
+  LEFT_speed = abs(x);
+  }
+  if (x<0){                   //If a negative value is imputed, the left motor will spin in the revirse direction
+  digitalWrite(LEFT_Backward,HIGH);
+  digitalWrite(LEFT_Forward,LOW);
+  LEFT_speed = abs(x);
+  }
+}
+
+void rightspeed(int x){       //value of leftspeed with result in the speed of the left motor with the sign changing the direction of it
+  if (x>0){                   //If a positive value is imputed, the right motor will spin in the forward direction
+  digitalWrite(RIGHT_Forward,HIGH);
+  digitalWrite(RIGHT_Backward,LOW);
+  RIGHT_speed = abs(x);
+  }
+  if (x<0){                   //If a positive value is imputed, the right motor will spin in the forward direction
+  digitalWrite(RIGHT_Backward,HIGH);
+  digitalWrite(RIGHT_Forward,LOW);
+  RIGHT_speed = abs(x);
+  }
+}
 
 //Functions for pre-determined pathway stuff later on
 //MAY CHANGE THE DELAY TIME DEPENDING ON TURN
 void turnRight(){
-
-  digitalWrite(LEFT_Forward,  HIGH);
-  digitalWrite(RIGHT_Backward, HIGH);
-
-  digitalWrite(LEFT_Backward,  LOW);
-  digitalWrite(RIGHT_Forward, LOW); 
-
-  delay(200);
-
-  digitalWrite(LEFT_Forward,  HIGH);
-  digitalWrite(RIGHT_Forward, HIGH);
-
-  digitalWrite(LEFT_Backward,  LOW);
-  digitalWrite(RIGHT_Backward, LOW); 
+  leftspeed(200);
+  rightspeed(-200);
+  delay(500);
 }
 
 void turnLeft(){
-
-  digitalWrite(LEFT_Backward,  HIGH);
-  digitalWrite(RIGHT_Forward, HIGH);
-
-  digitalWrite(LEFT_Forward,  LOW);
-  digitalWrite(RIGHT_Backward, LOW); 
-
-  delay(200);
-
-  digitalWrite(LEFT_Forward,  HIGH);
-  digitalWrite(RIGHT_Forward, HIGH);
-
-  digitalWrite(LEFT_Backward,  LOW);
-  digitalWrite(RIGHT_Backward, LOW); 
-
+  leftspeed(-200);
+  rightspeed(200);
+  delay(500);
 }
 
-void moveForward(){
-  if(!goesForward){
-
-    //goesForward=true;
-    
-    digitalWrite(LEFT_Forward,  HIGH);
-    digitalWrite(RIGHT_Forward, HIGH);
-  
-    digitalWrite(LEFT_Backward,  LOW);
-    digitalWrite(RIGHT_Backward, LOW); 
-  }
+void moveForward(int cm){
+  leftspeed(200);
+  rightspeed(200);
+  int ms = cm * 20;
+  delay(ms);
 }
 
-void moveStop(){
+void moveStop(int ms){
   digitalWrite(RIGHT_Forward, LOW);
   digitalWrite(LEFT_Forward, LOW);
   digitalWrite(RIGHT_Backward, LOW);
   digitalWrite(LEFT_Backward, LOW);
+  delay(ms
 }
 
-void moveBackward(){
-  //goesForward = false;
-
-  digitalWrite(LEFT_Forward,  LOW);
-  digitalWrite(RIGHT_Forward, LOW);
-
-  digitalWrite(LEFT_Backward,  HIGH);
-  digitalWrite(RIGHT_Backward, HIGH); 
+void moveBackward(int cm){
+  leftspeed(200);
+  rightspeed(200);
+  int ms = cm * 20;
+  delay(ms);
 }
