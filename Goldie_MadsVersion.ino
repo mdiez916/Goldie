@@ -56,15 +56,15 @@ void loop() {
       moveStop();
     }
     else{
-      if (dist < 60 && dist > 20){              //Obstacle 20-60cm away from robot
+      if (dist < 40 && dist > 10){              //Obstacle 20-60cm away from robot
         leftspeed(200);                         //LEFT always forward
         rightspeed(-280 + (8*dist));            //RIGHT will SLOW DOWN the closer it gets to an object
       }
-      if (dist > 60){                           //Continue forward if no obstacle within 60cm
+      if (dist > 40){                           //Continue forward if no obstacle within 60cm
         leftspeed(200);               
         rightspeed(200);              
       }
-      if (dist < 20){                           //Reverse at HALF SPEED if object is within 20cm
+      if (dist < 10){                           //Reverse at HALF SPEED if object is within 20cm
         leftspeed(-100);              
         rightspeed(-100);             
       }
