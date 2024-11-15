@@ -12,6 +12,8 @@ SR04 sr04 = SR04(ECHO_PIN,TRIG_PIN);
 
 #define colorpin 7                      //IR Pin & Initialization
 int color = 0;
+int colorState = 0;
+int onoff = 0;
 
 long dist;                              //Distance variable
 
@@ -52,7 +54,15 @@ void loop() {
     color = digitalRead(colorpin);
     dist = sr04.Distance();                     //Distance value given by US Sensor
     Serial.println(dist);                       //Print distance(cm) in Serial Monitor
-    if (color == LOW){
+    if (color == LOW && onoff = 0){
+      onoff = 1;
+    }
+    if (color == HIGH && onoff = 1){
+      onoff = 0;
+      colorState += 1;
+    }
+    if (colorState = 5)
+    {
       moveStop();
     }
     else{
