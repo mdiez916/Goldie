@@ -14,6 +14,7 @@ SR04 sr04 = SR04(ECHO_PIN,TRIG_PIN);
 int color = 0;
 int colorState = 0;
 int onoff = 0;
+bool timerState = false;
 
 long dist;                              //Distance variable
 
@@ -60,6 +61,22 @@ void loop() {
     if (color == HIGH && onoff = 1){
       onoff = 0;
       colorState += 1;
+      
+      if (!timerRunning) {
+            timerStart = millis();
+            timerRunning = true;
+        }
+    }
+
+    // Reset colorState if 2 seconds have passed
+    if (timerRunning && millis() - timerStart > 1000) {
+        colorState = 0;
+        timerRunning = false; // Reset timer
+    }
+
+    if (colorState == 5) {
+        moveStop();
+    }
     }
     if (colorState = 5)
     {
