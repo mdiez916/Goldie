@@ -22,8 +22,6 @@ long dist;                              //Distance variable
 int LEFT_speed = 0;                     //Initialize motor speeds to zero 
 int RIGHT_speed = 0; 
 
-#define buttonPin 8
-bool codestate = true;                  //true: default, false: custom pathway
 
 void setup() {
   Serial.begin(9600);
@@ -35,20 +33,9 @@ void setup() {
   pinMode(RIGHT_Backward,OUTPUT);
 
   pinMode(colorpin,INPUT);              //defines the ir sensor pin
-  pinMode(buttonPin,INPUT);             //defines the button pin
 }
 
 void loop() {
-  if (digitalRead(buttonPin) == 1 && codestate == false) {
-    codestate = true;
-    delay(250);
-  }
-  if (digitalRead(buttonPin) == 1 && codestate == true) {
-    codestate = false;
-    delay(250);
-  }
-
-  if (codestate == true) {
     color = digitalRead(colorpin);
     dist = sr04.Distance();                     //Distance value given by US Sensor
     Serial.println(dist);                       //Print distance(cm) in Serial Monitor
@@ -67,20 +54,17 @@ void loop() {
     }
 
     // Reset colorState if 2 seconds have passed
-    if (timerRunning && millis() - timerStart > 1000) {
+    if (timerRunning && millis() - timerStart > 2000) {
       colorState = 0;
       timerRunning = false; // Reset timer
     }
 
-    if (colorState >= 4) {
+    if (colorState >= 3) {
       moveStop();
       timerRunning = false;
     }
-    // Fix here: If colorState == 5, you should stop the robot
-    if (colorState >= 4) {
-      moveStop();
-      timerRunning = false;
-    } else {
+
+    else {
       if (dist < 40 && dist > 10) {              //Obstacle 20-60cm away from robot
         leftspeed(200);                         //LEFT always forward
         rightspeed(-280 + (8 * dist));            //RIGHT will SLOW DOWN the closer it gets to an object
@@ -94,19 +78,7 @@ void loop() {
         rightspeed(-100);             
       }
     }
-  } else {  // codestate == false
-    moveStop();
-    delay(5000);
-    moveForward(100);
-    moveStop();
-    delay(300);
-    moveBackward(100);
-    delay(200);
-  }
-  
-  analogWrite(LEFT_Motor, LEFT_speed);          //Send calculated motor speed to hardware
-  analogWrite(RIGHT_Motor, RIGHT_speed);    
-  Serial.println(digitalRead(buttonPin));
+    Serial.println(dist);
 }
 
 void leftspeed(int x) {                          //Controller for LEFT speed and direction
@@ -120,6 +92,7 @@ void leftspeed(int x) {                          //Controller for LEFT speed and
     digitalWrite(LEFT_Forward, LOW);
     LEFT_speed = abs(x);
   }
+  analogWrite(LEFT_Motor, LEFT_speed);
 }
 
 void rightspeed(int x) {                         //Controller for RIGHT speed and direction
@@ -133,26 +106,7 @@ void rightspeed(int x) {                         //Controller for RIGHT speed an
     digitalWrite(RIGHT_Forward, LOW);
     RIGHT_speed = abs(x);
   }
-}
-
-// Functions for pre-determined pathway stuff later on
-void turnRight() {
-  leftspeed(200);
-  rightspeed(-200);
-  delay(500);
-}
-
-void turnLeft() {
-  leftspeed(-200);
-  rightspeed(200);
-  delay(500);
-}
-
-void moveForward(int cm) {
-  leftspeed(200);
-  rightspeed(200);
-  int ms = cm * 20;
-  delay(ms);
+   analogWrite(RIGHT_Motor, RIGHT_speed);
 }
 
 void moveStop() {
@@ -160,11 +114,4 @@ void moveStop() {
   digitalWrite(LEFT_Forward, LOW);
   digitalWrite(RIGHT_Backward, LOW);
   digitalWrite(LEFT_Backward, LOW);
-}
-
-void moveBackward(int cm) {
-  leftspeed(-200);
-  rightspeed(-200);
-  int ms = cm * 20;
-  delay(ms);
 }
