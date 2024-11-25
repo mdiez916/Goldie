@@ -4,63 +4,29 @@
 #define RIGHT_Motor 9                   //VCC pin on Motor 2
 #define RIGHT_Forward 11                //Direction pin on Motor 2
 #define RIGHT_Backward 10               //Direction pin on Motor 2
-
-#include "SR04.h"                       //US Sensor declarations
-#define TRIG_PIN 2  
-#define ECHO_PIN 3  
-SR04 sr04 = SR04(ECHO_PIN, TRIG_PIN); 
-
-#define colorpin 7                      //IR Pin & Initialization
-int color = 0;
-int colorState = 0;
-int onoff = 0;
-bool timerRunning = false;  // Declare the timer running variable
-unsigned long timerStart = 0;  // Declare the timer start time
-
-long dist;                              //Distance variable
-
-int LEFT_speed = 0;                     //Initialize motor speeds to zero 
-int RIGHT_speed = 0; 
-
-#define buttonPin 8
-bool codestate = true;                  //true: default, false: custom pathway
+int LEFT_speed = 0;                     //Initialize motor speeds to zero
+int RIGHT_speed = 0;
 
 void setup() {
   Serial.begin(9600);
-  pinMode(LEFT_Motor,OUTPUT);           //Define motor pins
-  pinMode(LEFT_Forward,OUTPUT);
-  pinMode(LEFT_Backward,OUTPUT);
-  pinMode(RIGHT_Motor,OUTPUT);
-  pinMode(RIGHT_Forward,OUTPUT);
-  pinMode(RIGHT_Backward,OUTPUT);
-
-  pinMode(colorpin,INPUT);              //defines the ir sensor pin
-
-
+  pinMode(LEFT_Motor, OUTPUT);          //Define motor pins
+  pinMode(LEFT_Forward, OUTPUT);
+  pinMode(LEFT_Backward, OUTPUT);
+  pinMode(RIGHT_Motor, OUTPUT);
+  pinMode(RIGHT_Forward, OUTPUT);
+  pinMode(RIGHT_Backward, OUTPUT);
 }
 
 void loop() {
 
-moveForward(50);
+  moveForward(150);
 
-turnRight();
+  turnRight(180);
 
-moveForward(50);
+  moveForward(150);
 
-turnRight();
+  turnRight(180);
 
-moveForward(50);
-
-turnRight();
-
-moveForward(50);
-
-turnRight();
-
-
-
-  analogWrite(LEFT_Motor, LEFT_speed);          //Send calculated motor speed to hardware
-  analogWrite(RIGHT_Motor, RIGHT_speed);    
 }
 
 void leftspeed(int x) {                          //Controller for LEFT speed and direction
@@ -74,6 +40,7 @@ void leftspeed(int x) {                          //Controller for LEFT speed and
     digitalWrite(LEFT_Forward, LOW);
     LEFT_speed = abs(x);
   }
+  analogWrite(LEFT_Motor, LEFT_speed);            //moves the left motor at the intended speed
 }
 
 void rightspeed(int x) {                         //Controller for RIGHT speed and direction
@@ -87,36 +54,43 @@ void rightspeed(int x) {                         //Controller for RIGHT speed an
     digitalWrite(RIGHT_Forward, LOW);
     RIGHT_speed = abs(x);
   }
+  analogWrite(RIGHT_Motor, RIGHT_speed);          //Moves the Right Motor at the intended speed
 }
 
-// Functions for pre-determined pathway stuff later on
-void turnRight() {
+void turnRight(int Degrees) {
   leftspeed(200);
   rightspeed(-200);
-  delay(230);
+  delay(Degrees * 3.4);   //use 375 to get it to turn 90 degrees. Since it turns a little bit to straighten the back wheel, I am going to turn it down a bit.
+  moveStop(250);
+  moveForward(15);
+  turnLeft(10);       //This is meant as a final adjustment and to straighted the back wheel
+  moveStop(250);
 }
 
-void turnLeft() {
+void turnLeft(int Degrees) {
   leftspeed(-200);
   rightspeed(200);
-  delay(230);
+  delay(Degrees * 3.4);
+  moveStop(250);
 }
 
 void moveForward(int cm) {
-  leftspeed(250);
+  leftspeed(225);             //We found these two values from trial and error
   rightspeed(250);
   int ms = cm * 25;
   delay(ms);
+  moveStop(250);
 }
 
-void moveStop() {
+void moveStop(int ms_stopped) {
   digitalWrite(RIGHT_Forward, LOW);
   digitalWrite(LEFT_Forward, LOW);
   digitalWrite(RIGHT_Backward, LOW);
   digitalWrite(LEFT_Backward, LOW);
+  delay(ms_stopped);
 }
 
-void moveBackward(int cm) {
+void moveBackward(int cm) {   //using this is not recommended because we have a stop on the back swival wheel which won't allow it to move backward straight.
   leftspeed(-200);
   rightspeed(-200);
   int ms = cm * 25;
